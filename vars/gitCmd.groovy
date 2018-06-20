@@ -36,6 +36,8 @@ def push(ret) {
     def protocol = token[0]
     def domain = token[1]
     command.append("${protocol}://${GIT_USER}:${GIT_PASSWORD}@${domain}")
+    
+    sh command.toString()
   }
   
 }
