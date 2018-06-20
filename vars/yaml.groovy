@@ -107,7 +107,7 @@ def bluegreenDeployUpdate(ret) {
     }
   }
   
-  def update = [
+  def data = [
     '.metadata.name': deployName,
     '.metadata.labels.version': version,
     '.spec.selector.matchLabels.version': version,
@@ -116,7 +116,7 @@ def bluegreenDeployUpdate(ret) {
   ]
   
   def config2 = config.clone()
-  config2.put('update', update) 
+  config2.put('update', data) 
   update config2
 }
 
@@ -136,10 +136,10 @@ def bluegreenServiceUpdate(ret) {
     version = env.VERSION
   }
   
-  def update = ['.spec.selector.version': version]
+  def data = ['.spec.selector.version': version]
   
   def config2 = config.clone()
-  config2.put('update', update) 
+  config2.put('update', data) 
   update config2
 }
 
