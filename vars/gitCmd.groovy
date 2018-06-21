@@ -107,7 +107,7 @@ def push(ret) {
   def protocol = token[0]
   def domain = token[1]
   
-  withCredentials([usernamePassword(credentialsId: config.credentialId, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
+  withCredentials([usernamePassword(credentialsId: config.credentialsId, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
     command.append("${protocol}://${GIT_USER}:${GIT_PASSWORD}@${domain}")
     
     sh command.toString()
