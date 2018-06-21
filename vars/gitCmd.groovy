@@ -27,10 +27,10 @@ def checkout(ret) {
 def commit(ret) {
   Logger logger = Logger.getLogger(this)
   def config = getParam(ret, [
-    message : """Commit from Jenkins system.
+    message : """\"Commit from Jenkins system.
 JOB : ${env.JOB_NAME}
 BUILD_NUMBER : ${env.BUILD_NUMBER}
-BUIlD_URL : ${env.BUILD_URL}
+BUIlD_URL : ${env.BUILD_URL}\"
 """ 
   ])
   
@@ -99,22 +99,17 @@ def push(ret) {
 def tag(ret) {
   Logger logger = Logger.getLogger(this)
   def config = getParam(ret, [ 
-    message : """Release from Jenkins system.
+    message : """\"Release from Jenkins system.
 JOB : ${env.JOB_NAME}
 BUILD_NUMBER : ${env.BUILD_NUMBER}
-BUIlD_URL : ${env.BUILD_URL}
-""" 
+BUIlD_URL : ${env.BUILD_URL}\"
+""" ,
+    tag: env.VERSION
   ])
   
   def command = new StringBuffer('git tag ')
   
-  def tag
-  if (config.tag) {
-    tag = config.tag
-  } else if (env.VERSION) {
-    logger.debug("tag is not set. Using env.VERSION")
-    tag = env.VERSION
-  } else {
+  if (!config.tag) {
     logger.error('')
     createException()
   }
