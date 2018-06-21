@@ -36,10 +36,10 @@ def commit(ret) {
     def repo = Eval.me(env.SCM_INFO)
     config.authorName = repo.GIT_AUTHOR_NAME
     config.authorEmail = repo.GIT_AUTHOR_EMAIL
-    config.message = """\"Commit from Jenkins system.
+    config.message = """Commit from Jenkins system.
 JOB : ${env.JOB_NAME}
 BUILD_NUMBER : ${env.BUILD_NUMBER}
-BUIlD_URL : ${env.BUILD_URL}\"
+BUIlD_URL : ${env.BUILD_URL}
 """ 
   }
   
