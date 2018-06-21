@@ -130,14 +130,14 @@ BUIlD_URL : ${env.BUILD_URL}\"
     tag: env.VERSION
   ])
   
-  def command = new StringBuffer('git tag ')
-  
   if (!config.tag) {
-    logger.error('')
-    createException()
+    logger.error('tag : When calling tag function, set tag value or set it to property VERSION.')
+    createException('RC503')
   }
+  
+  def command = new StringBuffer('git tag ')
 
-  command.append("-a ${tag} -m ${config.message}")
+  command.append("-a ${config.tag} -m ${config.message}")
   sh command.toString()
   
   def config2 = config.clone()
