@@ -626,7 +626,8 @@ private def executeApplyFile(command, config, logger) {
         rolloutStatus config3
       }
     }
-
+    // print
+    resourceExists config
     
   } catch (Exception e) {
     // Exception from rollout status
