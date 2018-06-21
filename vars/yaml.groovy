@@ -126,6 +126,8 @@ def bluegreenDeployUpdate(ret) {
     '.spec.template.spec.containers[0].image': dockerImage
   ]
   
+  logger.info("Updating ${file} with ${deployName}, ${version}, ${dockerImage}")
+  
   def config2 = config.clone()
   config2.put('update', data) 
   update config2
@@ -153,7 +155,7 @@ def bluegreenServiceUpdate(ret) {
 
   
   def data = ['.spec.selector.version': version]
-  
+  logger.info("Updating ${file} with ${version}")
   def config2 = config.clone()
   config2.put('update', data) 
   update config2
