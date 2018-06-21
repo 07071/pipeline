@@ -2,42 +2,128 @@ import retort.utils.logging.Logger
 import static retort.utils.Utils.delegateParameters as getParam
 
 /**
- * file list
- * commitMessage
+ * git checkout
+ *
+ * @param url
+ * @param branch
+ * @param credentialsId
+ * @param poll
+ * @param changelog
  */
-def commit(ret) {
+def checkout(ret) {
   Logger logger = Logger.getLogger(this)
   def config = getParam(ret)
   
+  def repo = git(config)
+  
+  env.SCM_INFO = repo.inspect()
+}
+
+
+/**
+ * @param file string or list
+ * @param message
+ */
+def commit(ret) {
+  Logger logger = Logger.getLogger(this)
+  def config = getParam(ret, [
+    message : """Commit from Jenkins system.
+JOB : ${env.JOB_NAME}
+BUILD_NUMBER : ${env.BUILD_NUMBER}
+BUIlD_URL : ${env.BUILD_URL}
+""" 
+  ])
+  
   def command = new StringBuffer()
   
-  config.file.each{
+  if (config.file in CharSequence) {
+    logger.debug("Staging ${config.file}")
+    command.append("git add ${config.file}\n")
+  } else if ((config.file instanceof List) || config.file.getClass().isArray()) {
+    config.file.each {
+      logger.debug("Staging ${it}")
       command.append("git add ${it}\n")
+    }
+  } else {
+    logger.debug('commit: file only support List, Array or String type parameter.')
+    createException('RC502')
   }
   
-  command.append("git commit -m '${config.commitMessage}'")
+  if (config.message) {
+    command.append("git commit -m '${config.message}'")
+  } else {
+    logger.debug('commit : message is required.')
+    createException('RC501')
+  }
 
   sh command.toString()
 }
 
 /**
- * gitUrl
- * credentialId
+ * @param gitUrl
+ * @param credentialsId required.
+ * @param tags : false
  */
 def push(ret) {
   Logger logger = Logger.getLogger(this)
-  def config = getParam(ret)
+  def config = [:]
+  if (env.SCM_INFO) {
+    def repo = Eval.me(env.SCM_INFO)
+    config.put('gitUrl', repo.GIT_URL)
+  }
+
+  config = getParam(ret, config)
   
+  def command = new StringBuffer('git push ')
+  
+  if (config.tags == true) {
+    command.append('--tags ')
+  }
+  
+  def token = config.gitUrl.split('://')
+  def protocol = token[0]
+  def domain = token[1]
   
   withCredentials([usernamePassword(credentialsId: config.credentialId, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
-    def command = new StringBuffer('git push ')
-     
-    def token = config.gitUrl.split('://')
-    def protocol = token[0]
-    def domain = token[1]
     command.append("${protocol}://${GIT_USER}:${GIT_PASSWORD}@${domain}")
     
     sh command.toString()
   }
-  
 }
+
+/**
+ * @param tag env.VERSION
+ * @param message
+ * @param credentialsId required.
+ */
+def tag(ret) {
+  Logger logger = Logger.getLogger(this)
+  def config = getParam(ret, [ 
+    message : """Release from Jenkins system.
+JOB : ${env.JOB_NAME}
+BUILD_NUMBER : ${env.BUILD_NUMBER}
+BUIlD_URL : ${env.BUILD_URL}
+""" 
+  ])
+  
+  def command = new StringBuffer('git tag ')
+  
+  def tag
+  if (config.tag) {
+    tag = config.tag
+  } else if (env.VERSION) {
+    logger.debug("tag is not set. Using env.VERSION")
+    tag = env.VERSION
+  } else {
+    logger.error('')
+    createException()
+  }
+
+  command.append("-a ${tag} -m ${config.message}")
+  sh command.toString()
+  
+  def config2 = config.clone()
+  config2.put('tags', true)
+  push(config2)
+}
+
