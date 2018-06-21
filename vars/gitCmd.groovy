@@ -43,7 +43,7 @@ BUIlD_URL : ${env.BUILD_URL}\"
 """ 
   }
   
-  def config = getParam(ret, config)
+  config = getParam(ret, config)
   
   def command = new StringBuffer()
   
