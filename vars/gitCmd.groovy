@@ -17,24 +17,47 @@ def checkout(ret) {
   def repo = git(config)
   
   env.SCM_INFO = repo.inspect()
+  
+  return repo
 }
 
 
 /**
  * @param file string or list
  * @param message
+ * @param authorName
+ * @param authorEmail
  */
 def commit(ret) {
   Logger logger = Logger.getLogger(this)
-  def config = getParam(ret, [
-    message : """\"Commit from Jenkins system.
+  
+  def config = [:]
+  if (env.SCM_INFO) {
+    def repo = Eval.me(env.SCM_INFO)
+    config.authorName = repo.GIT_AUTHOR_NAME
+    config.authorEmail = repo.GIT_AUTHOR_EMAIL
+    config.message = """\"Commit from Jenkins system.
 JOB : ${env.JOB_NAME}
 BUILD_NUMBER : ${env.BUILD_NUMBER}
 BUIlD_URL : ${env.BUILD_URL}\"
 """ 
-  ])
+  }
+  
+  def config = getParam(ret, config)
   
   def command = new StringBuffer()
+  
+  if (config.authorName) {
+    command.append("git config --global user.name \"${config.authorName}\"\n")
+  } else {
+    command.append("git config --global user.name \"JENKINS-SYSTEM\"\n")
+  }
+
+  if (config.authorEmail) {
+    command.append("git config --global user.email \"${config.authorEmail}\"\n")
+  } else {
+    command.append("git config --global user.email \"jenkins@sk.com\"\n")
+  }
   
   if (config.file in CharSequence) {
     logger.debug("Staging ${config.file}")
