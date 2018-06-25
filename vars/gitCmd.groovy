@@ -115,7 +115,19 @@ def push(ret) {
     URI gitUri = new URI(config.gitUrl)
     
     withCredentials([usernamePassword(credentialsId: config.credentialsId, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
-      command.append("${gitUri.getScheme()}://${GIT_USER?:''}${GIT_PASSWORD?':'+GIT_PASSWORD+'@':GIT_USER?'@':''}${gitUri.getHost()}${gitUri.getPath()}")
+      // protocol
+      command.append("${gitUri.getScheme()}")
+      command.append("://")
+      // username
+      command.append("${GIT_USER?:''}")
+      // password
+      command.append("${GIT_PASSWORD?':'+GIT_PASSWORD+'@':GIT_USER?'@':''}")
+      // host
+      command.append("${gitUri.getHost()}")
+      // port
+      command.append("${dbUri.getPort()?':'+dbUri.getPort():''}")
+      // path
+      command.append("${gitUri.getPath()}")
       sh command.toString()
     }
   } else {
