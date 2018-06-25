@@ -125,7 +125,7 @@ def push(ret) {
       // host
       command.append("${gitUri.getHost()}")
       // port
-      command.append("${dbUri.getPort()?':'+dbUri.getPort():''}")
+      command.append("${gitUri.getPort()?':'+gitUri.getPort():''}")
       // path
       command.append("${gitUri.getPath()}")
       sh command.toString()
