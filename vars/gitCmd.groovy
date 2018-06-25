@@ -56,7 +56,7 @@ BUIlD_URL : ${env.BUILD_URL}\"
   if (config.authorEmail) {
     command.append("git config --global user.email \"${config.authorEmail}\"\n")
   } else {
-    command.append("git config --global user.email \"jenkins@sk.com\"\n")
+    command.append("git config --global user.email \"jenkins.system@jenkins.com\"\n")
   }
   
   if (config.file in CharSequence) {
@@ -93,25 +93,37 @@ def push(ret) {
   if (env.SCM_INFO) {
     def repo = Eval.me(env.SCM_INFO)
     config.put('gitUrl', repo.GIT_URL)
+  } else if (env.GIT_URL) {
+    config.put('gitUrl', env.GIT_URL)
   }
 
   config = getParam(ret, config)
   
+  if (!config.gitUrl) {
+    logger.error('push : When calling push function, set gitUrl value or set it to property GIT_URL.')
+    throwException('RC504')
+  }
+
   def command = new StringBuffer('git push ')
   
   if (config.tags == true) {
     command.append('--tags ')
   }
   
-  def token = config.gitUrl.split('://')
-  def protocol = token[0]
-  def domain = token[1]
   
-  withCredentials([usernamePassword(credentialsId: config.credentialsId, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
-    command.append("${protocol}://${GIT_USER}:${GIT_PASSWORD}@${domain}")
+  if (config.credentialsId) {
+    URI gitUri = new URI(config.gitUrl)
     
+    withCredentials([usernamePassword(credentialsId: config.credentialsId, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
+      command.append("${gitUri.getScheme()}://${GIT_USER?:''}${GIT_PASSWORD?':'+GIT_PASSWORD+'@':GIT_USER?'@':''}${gitUri.getHost()}${gitUri.getPath()}")
+      sh command.toString()
+    }
+  } else {
+    command.append("${config.gitUrl}")
     sh command.toString()
   }
+
+
 }
 
 /**
