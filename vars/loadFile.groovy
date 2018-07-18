@@ -12,10 +12,12 @@ def xxx(){
   retort.utils.Utils.class.classLoader.addURL(url)
   def parser = new org.yaml.snakeyaml.Yaml()
   echo "parser := $parser"
-  echo parser.load("""
+  
+  def obj = parser.load("""
   key: value
   arr:
   - aaa
   - bbb
   """)
+  echo "$obj"
 }
