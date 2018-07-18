@@ -2,7 +2,7 @@
 def xxx(){
   echo "loadFile!!"
   
-  echo "${System.class}"
-  echo "${System.class.classLoader}"
-  echo "${System.class.classLoader.rootLoader}"
+  echo "${retort.utils.Utils.class}"
+  echo "${retort.utils.Utils.class.classLoader}"
+  echo "${retort.utils.Utils.class.classLoader.rootLoader}"
 }
