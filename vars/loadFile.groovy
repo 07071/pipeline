@@ -1,8 +1,8 @@
 
 static def xxx(){
-  println "loadFile!!"
+  echo "loadFile!!"
   
-  println "${System.class}"
-  println "${System.class.classLoader}"
-  println "${System.class.classLoader.rootLoader}"
+  echo "${System.class}"
+  echo "${System.class.classLoader}"
+  echo "${System.class.classLoader.rootLoader}"
 }
