@@ -1,5 +1,5 @@
 
-static def xxx(){
+def xxx(){
   echo "loadFile!!"
   
   echo "${System.class}"
