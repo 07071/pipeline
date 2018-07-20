@@ -136,7 +136,8 @@ def push(ret) {
       	gitPass = URLEncoder.encode(GIT_PASSWORD, "UTF-8")
       	//command.append("${':'+gitPass+'@'}")
         wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitPass, var: 'PASS']]]) {
-          echo "${PASS}"
+          //echo "${PASS}"
+          echo env['USER']
           //command.append("${':'+PASS+'@'}")
         }
       } else {
