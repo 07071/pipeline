@@ -124,7 +124,8 @@ def push(ret) {
         gitUser = URLEncoder.encode(GIT_USER, "UTF-8")
         //command.append(gitUser)
         wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitUser, var: 'USER']]]) {
-          echo "${USER}"
+          //echo "${USER}"
+          echo env['USER']
           //command.append("${USER}")
         }
       }
