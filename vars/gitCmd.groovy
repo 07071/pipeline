@@ -124,8 +124,8 @@ def push(ret) {
         gitUser = URLEncoder.encode(GIT_USER, "UTF-8")
         //command.append(gitUser)
         wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitUser, var: 'USER']]]) {
-          //echo "${USER}"
-          echo env['USER']
+          echo "$USER"
+          //echo env['USER'] - null
           //command.append("${USER}")
         }
       }
@@ -136,8 +136,8 @@ def push(ret) {
       	gitPass = URLEncoder.encode(GIT_PASSWORD, "UTF-8")
       	//command.append("${':'+gitPass+'@'}")
         wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitPass, var: 'PASS']]]) {
-          //echo "${PASS}"
-          echo env['USER']
+          echo "$PASS"
+          //echo env['USER'] - null
           //command.append("${':'+PASS+'@'}")
         }
       } else {
