@@ -151,6 +151,7 @@ def push(ret) {
       command.append("${(gitUri.getPort()!=-1)?':'+gitUri.getPort():''}")
       // path
       command.append("${gitUri.getPath()}")
+      sh command.toString()
     }
     /*
     wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitPass, var: 'PASS']]]) {
@@ -161,8 +162,8 @@ def push(ret) {
     */
   } else {
     command.append("${config.gitUrl}")
-  }
-  sh command.toString()
+    sh command.toString()
+  } 
 
 }
 
