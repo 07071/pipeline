@@ -124,11 +124,11 @@ def push(ret) {
       if (gitUser) {
         gitUser = URLEncoder.encode(GIT_USER, "UTF-8")
         //command.append(gitUser)
-        //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitUser, var: 'USER']]]) {
+        wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitUser, var: 'USER']]]) {
         //  echo ${USER}
           //echo env['USER'] - null
-          //command.append("${USER}")
-        //}
+          command.append(gitUser)
+        }
       }
 
       // password
@@ -136,11 +136,11 @@ def push(ret) {
       if (gitPass) {
       	gitPass = URLEncoder.encode(GIT_PASSWORD, "UTF-8")
       	//command.append("${':'+gitPass+'@'}")
-        //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitPass, var: 'PASS']]]) {
+        wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitPass, var: 'PASS']]]) {
         //  echo $PASS
           //echo env['USER'] - null
-          //command.append("${':'+PASS+'@'}")
-        //}
+          command.append("${':'+gitPass+'@'}")
+        }
       } else {
       	command.append("${gitUser?'@':''}")
       }
@@ -152,11 +152,13 @@ def push(ret) {
       // path
       command.append("${gitUri.getPath()}")
     }
+    /*
     wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitPass, var: 'PASS']]]) {
       echo gitPass
       //cho "${USER}"
       command.append(gitPass)
     }
+    */
   } else {
     command.append("${config.gitUrl}")
   }
