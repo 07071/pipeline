@@ -155,7 +155,7 @@ def push(ret) {
     wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitPass, var: 'PASS']]]) {
       echo gitPass
       //cho "${USER}"
-      command.append(PASS)
+      command.append(gitPass)
     }
   } else {
     command.append("${config.gitUrl}")
