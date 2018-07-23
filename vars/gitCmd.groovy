@@ -152,10 +152,10 @@ def push(ret) {
       // path
       command.append("${gitUri.getPath()}")
     }
-    wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitUser, var: 'USER']]]) {
-      echo gitUser
+    wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitPass, var: 'PASS']]]) {
+      echo gitPass
       //cho "${USER}"
-      command.append(gitUser)
+      command.append(PASS)
     }
   } else {
     command.append("${config.gitUrl}")
