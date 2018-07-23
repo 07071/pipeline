@@ -113,33 +113,34 @@ def push(ret) {
   
   if (config.credentialsId) {
     URI gitUri = new URI(config.gitUrl)
-    
+    def gitUser
+    def gitPass
     withCredentials([usernamePassword(credentialsId: config.credentialsId, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
       // protocol
       command.append("${gitUri.getScheme()}")
       command.append("://")
       // username
-      def gitUser = GIT_USER
+      gitUser = GIT_USER
       if (gitUser) {
         gitUser = URLEncoder.encode(GIT_USER, "UTF-8")
         //command.append(gitUser)
-        wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitUser, var: 'USER']]]) {
-          echo ${USER}
+        //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitUser, var: 'USER']]]) {
+        //  echo ${USER}
           //echo env['USER'] - null
           //command.append("${USER}")
-        }
+        //}
       }
 
       // password
-      def gitPass = GIT_PASSWORD
+      gitPass = GIT_PASSWORD
       if (gitPass) {
       	gitPass = URLEncoder.encode(GIT_PASSWORD, "UTF-8")
       	//command.append("${':'+gitPass+'@'}")
-        wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitPass, var: 'PASS']]]) {
-          echo $PASS
+        //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitPass, var: 'PASS']]]) {
+        //  echo $PASS
           //echo env['USER'] - null
           //command.append("${':'+PASS+'@'}")
-        }
+        //}
       } else {
       	command.append("${gitUser?'@':''}")
       }
@@ -150,6 +151,10 @@ def push(ret) {
       command.append("${(gitUri.getPort()!=-1)?':'+gitUri.getPort():''}")
       // path
       command.append("${gitUri.getPath()}")
+    }
+    wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: gitUser, var: 'USER']]]) {
+      echo "${USER}"
+      command.append("${USER}")
     }
   } else {
     command.append("${config.gitUrl}")
